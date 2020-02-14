@@ -27,6 +27,7 @@
 #define POT_TOLERANCE 3
 #define MAX_TEMP 30
 #define MIN_TEMP 5
+#define RF_SEND_TIMES 2
 
 const uint64_t code = 0xE8E9F0F0E1LL;
 unsigned int targetTemp = 10;
@@ -93,15 +94,17 @@ unsigned int potChanged(){
 }
 
 void burnItUp(){
-  const char text[] = "burn";
-  radio.write(&text, sizeof(text));
+  unsigned int state = 2;
+  for(int i = 0; i < RF_SEND_TIMES; i++)
+    radio.write(&state, sizeof(state));
   Serial.println("Make it hot!");
   delay(100);
 }
 
 void stopTheFire(){
-  const char text[] = "stop";
-  radio.write(&text, sizeof(text));
+  unsigned int state = 1;
+  for(int i = 0; i < RF_SEND_TIMES; i++)
+    radio.write(&state, sizeof(state));
   Serial.println("Stop it please.");
   delay(100);
 }
