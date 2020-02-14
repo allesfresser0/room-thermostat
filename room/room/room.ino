@@ -57,7 +57,7 @@ void loop() {
   newPot = analogRead(POT_PIN);
   if ((millis() % 2500) == 0)
     currentTemp = dht.readTemperature();
-  if((newPot < (prePot - POT_TOLERANCE)) || (newPot > (prePot + POT_TOLERANCE))){
+  if((newPot <= (prePot - POT_TOLERANCE)) || (newPot >= (prePot + POT_TOLERANCE))){
     prePot = potChanged();
   }
   else if(digitalRead(BUTTON_PIN) == HIGH){
@@ -86,8 +86,12 @@ unsigned int potChanged(){
   digitalWrite(LED_PIN, HIGH);
   while((digitalRead(BUTTON_PIN) == LOW) && ((millis() - startTime) < 8000)){
     potValue = analogRead(POT_PIN);
-    targetTemp = map(potValue, 0, 1023, MIN_TEMP, MAX_TEMP);
-    printMenu(currentTemp, targetTemp);
+    if((newPot <= (prePot - POT_TOLERANCE)) || (newPot >= (prePot + POT_TOLERANCE))){
+      prePot = potValue;
+      potValue = analogRead(POT_PIN);
+      targetTemp = map(potValue, 0, 1023, MIN_TEMP, MAX_TEMP);
+      printMenu(currentTemp, targetTemp);
+    }
   }
   digitalWrite(LED_PIN, LOW);
   return potValue;
