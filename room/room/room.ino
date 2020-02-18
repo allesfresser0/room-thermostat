@@ -7,7 +7,7 @@
 
 //defining DHT11 variables
 #define DHT_TYPE DHT11
-#define DHT_PIN 2
+#define DHT_PIN A3
 //defining nRF24L01 pins
 #define CE_PIN 9
 #define CS_PIN 10
@@ -24,7 +24,7 @@
 
 #define LIGHT_TIME 3000
 #define TEMP_TOLERANCE 2
-#define POT_TOLERANCE 3
+#define POT_TOLERANCE 5
 #define MAX_TEMP 30
 #define MIN_TEMP 5
 #define RF_SEND_TIMES 2
@@ -34,6 +34,7 @@ unsigned int targetTemp = 10;
 unsigned int prePot;
 unsigned int newPot;
 float currentTemp;
+bool burned = false;
 
 DHT dht(DHT_PIN, DHT_TYPE);
 RF24 radio(CE_PIN, CS_PIN);
@@ -47,6 +48,7 @@ void setup() {
   
   Serial.begin(9600);
   lcd.begin(16, 2);
+  dht.begin();
   radio.begin();
   radio.openWritingPipe(code);
   radio.stopListening();
@@ -55,19 +57,27 @@ void setup() {
 
 void loop() {
   newPot = analogRead(POT_PIN);
-  if ((millis() % 2500) == 0)
-    currentTemp = dht.readTemperature();
+  currentTemp = dht.readTemperature();
+  Serial.print("Current temperature: ");
+  Serial.println(currentTemp);
   if((newPot <= (prePot - POT_TOLERANCE)) || (newPot >= (prePot + POT_TOLERANCE))){
+    Serial.println("Pot changed");
     prePot = potChanged();
   }
-  else if(digitalRead(BUTTON_PIN) == HIGH){
+  if(digitalRead(BUTTON_PIN) == HIGH){
+    Serial.println("----------LED on");
     lightOn();
   }
-  if(currentTemp < targetTemp)
+  if((currentTemp < targetTemp) && (!burned)){
     burnItUp();
-  else if(currentTemp >= targetTemp)
+    burned = true;
+  }
+  else if((currentTemp >= targetTemp) && (burned)){
     stopTheFire();
-  
+    burned = false;
+  }
+    
+  delay(100);
 }
 
 void printMenu(float currentTemp, unsigned int targetTemp){
@@ -80,13 +90,14 @@ void printMenu(float currentTemp, unsigned int targetTemp){
 }
 
 unsigned int potChanged(){
+  unsigned int potValue;
   unsigned long startTime = millis();
   float currentTemp = dht.readTemperature();
-  unsigned int potValue = prePot;
   digitalWrite(LED_PIN, HIGH);
+  Serial.println("----------LED on");
   while((digitalRead(BUTTON_PIN) == LOW) && ((millis() - startTime) < 8000)){
     potValue = analogRead(POT_PIN);
-    if((newPot <= (prePot - POT_TOLERANCE)) || (newPot >= (prePot + POT_TOLERANCE))){
+    if((potValue <= (prePot - POT_TOLERANCE)) || (potValue >= (prePot + POT_TOLERANCE))){
       prePot = potValue;
       potValue = analogRead(POT_PIN);
       targetTemp = map(potValue, 0, 1023, MIN_TEMP, MAX_TEMP);
@@ -94,6 +105,7 @@ unsigned int potChanged(){
     }
   }
   digitalWrite(LED_PIN, LOW);
+  while(digitalRead(BUTTON_PIN) == HIGH){}
   return potValue;
 }
 

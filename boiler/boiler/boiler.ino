@@ -7,7 +7,7 @@
 //defining nRF24L01 pins
 #define CE_PIN 9
 #define CS_PIN 10
-//definin relay pin
+//defining relay pin
 #define RELAY_PIN 2
 
 const uint64_t code = 0xE8E9F0F0E1LL; //rf channel key
@@ -33,11 +33,11 @@ void loop() {
     Serial.println(state);
     if(state == 1){ //if the message is "1"...
       digitalWrite(RELAY_PIN, HIGH); //... stop
-      Serial.println("The combi boiler on");
+      Serial.println("The combi boiler off");
     }
     else if(state == 2){ //if the message is "2"...
       digitalWrite(RELAY_PIN, LOW); //...burn it up :)
-      Serial.println("The combi boiler off");
+      Serial.println("The combi boiler on");
     }
   }
 }
