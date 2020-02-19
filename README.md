@@ -13,10 +13,10 @@ RF24 library by maniacbug
 Clone or Download > Download ZIP > Arduino IDE > Sketch > Include Library > Add .ZIP Library
 ```
 ### Hardware
-*nRF24L01
-*2 x Arduino(Nano, Uno, Mega etc.)
-*2x16 LCD
-*Push button
-*DHT11 or DHT22
-*Potentiometer
-*Relay
+* nRF24L01
+* 2 x Arduino(Nano, Uno, Mega etc.)
+* 2x16 LCD
+* Push button
+* DHT11 or DHT22
+* Potentiometer
+* Relay
