@@ -1,10 +1,8 @@
 # room-thermostat
 Arduino based room thermostat for combi boiler
 
-##Prerequisites
-
-###Software
-
+## Prerequisites
+### Software
 DHT sensor library by Adafruit
 ```
 Arduino IDE > Sketch > Include Library > Manage Lbraries > Search "DHT" > download "DHT sensor library by Adafruit"
@@ -14,8 +12,7 @@ RF24 library by maniacbug
 ```
 Clone or Download > Download ZIP > Arduino IDE > Sketch > Include Library > Add .ZIP Library
 ```
-###Hardware
-
+### Hardware
 *nRF24L01
 *2 x Arduino(Nano, Uno, Mega etc.)
 *2x16 LCD
